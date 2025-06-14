@@ -16,7 +16,6 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - ${MEDIA_DIRECTORY}:/data
       - ${CONFIG_DIRECTORY}/jellyfin:/config
-      - ${CACHE_DIRECTORY}/jellyfin:/config
     networks:
       - netarr
     ports:
