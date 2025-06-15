@@ -52,23 +52,13 @@ FILES_TO_COPY=(
     ".env"
 )
 
-# List of directories to copy (source relative to SRC_DIR, destination relative to DEST_DIR)
-# Format: "source_dir destination_dir"
-DIRS_TO_COPY=(
-    "configarr config/configarr/config"
-)
-
 # Copy files
 for file in "${FILES_TO_COPY[@]}"; do
     echo "Copying $SRC_DIR/$file to $DEST_DIR/$file"
     cp "$SRC_DIR/$file" "$DEST_DIR/$file"
 done
 
-# Copy directories
-for dir_pair in "${DIRS_TO_COPY[@]}"; do
-    src_dir=$(echo $dir_pair | awk '{print $1}')
-    dest_dir=$(echo $dir_pair | awk '{print $2}')
-    echo "Copying $SRC_DIR/$src_dir/* to $DEST_DIR/$dest_dir/"
-    mkdir -p "$DEST_DIR/$dest_dir"
-    cp -r "$SRC_DIR/$src_dir"/* "$DEST_DIR/$dest_dir/"
-done
+# Recursively copy the config directory
+echo "Recursively copying $SRC_DIR/config to $DEST_DIR/config"
+mkdir -p "$DEST_DIR/config"
+rsync -v "$SRC_DIR/config/" "$DEST_DIR/config/"

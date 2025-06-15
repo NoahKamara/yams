@@ -1,0 +1,46 @@
+---
+pageInfo:
+  title: Stardust Dashboard
+  navLinks:
+    - title: GitHub
+      url: https://github.com/Lissy93/dashy
+      icon: fab fa-github
+sections:
+  - name: Media Management
+    items:
+      - title: Jellyfin
+        description: Media server for streaming
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/jellyfin-logo.png
+        url: http://192.168.178.111:8096
+      - title: Jellyseerr
+        description: Media request management
+        icon: https://raw.githubusercontent.com/fallenbagel/jellyseerr/develop/public/os_logo_square.png
+        url: http://192.168.178.111:5055
+  - name: Downloaders
+    items:
+      - title: qBittorrent
+        description: Torrent downloader
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/qbittorrent-logo.png
+        url: http://192.168.178.111:8081
+      - title: SABnzbd
+        description: Usenet downloader
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/sabnzbd-logo.png
+        url: http://192.168.178.111:8080
+  - name: Indexers & Querying
+    items:
+      - title: Prowlarr
+        description: Torrent indexer/searcher
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/prowlarr-logo.png
+        url: http://192.168.178.111:9696
+      - title: Sonarr
+        description: Query, add downloads to the download queue and index TV shows
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/sonarr-logo.png
+        url: http://192.168.178.111:8989
+      - title: Radarr
+        description: Query, add downloads to the download queue and index Movies
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/radarr-logo.png
+        url: http://192.168.178.111:7878
+      - title: Bazarr
+        description: Query, add downloads to the download queue and index TV shows subtitles
+        icon: https://raw.githubusercontent.com/linuxserver/docker-templates/master/linuxserver.io/img/bazarr-logo.png
+        url: http://192.168.178.111:6767

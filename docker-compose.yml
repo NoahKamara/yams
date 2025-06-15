@@ -3,6 +3,26 @@ networks:
   netarr:
   downloaders:
 services:
+  # Dashy is our dashboard
+  dashy:
+    image: lissy93/dashy
+    container_name: Dashy
+    volumes:
+      - ${CONFIG_DIRECTORY}/dashy/conf.yml:/app/user-data/conf.yml
+    ports:
+      - 8080:8080
+    # Set any environmental variables
+    environment:
+      - NODE_ENV=production
+      - UID=${PUID}
+      - GID=${PGID}
+    restart: unless-stopped
+    healthcheck:
+      test: ['CMD', 'node', '/app/services/healthcheck']
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
   # jellyfin is used to serve your media to the client devices
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
