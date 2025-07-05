@@ -1,0 +1,198 @@
+# ===================================================================
+# Home Assistant Automation: MakeMKV Notifications (CORRECTED)
+# ===================================================================
+#
+# This is the corrected version with proper "notify" (not "nnotify")
+# and Noah's device name already filled in.
+#
+# Copy this entire configuration to replace your existing automation.
+# ===================================================================
+
+alias: MakeMKV Notification
+description: "Enhanced notifications for MakeMKV disc ripping events"
+triggers:
+  - trigger: webhook
+    allowed_methods:
+      - POST
+      - PUT
+    local_only: true
+    webhook_id: "-CB387ndlPmk9iPXqqP-Zprk8"
+conditions: []
+actions:
+  - choose:
+      # ===== SERVICE STARTED =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'automatic_disc_ripper_started' }}"
+        sequence:
+          - data:
+              title: "🎬 MakeMKV Service Started"
+              message: "Automatic disc ripper is now active and waiting for discs"
+              data:
+                importance: low
+                color: "#2196F3"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== DISC RIP STARTED (AUTO) =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'disc_rip_started' }}"
+        sequence:
+          - data:
+              title: "📀 Disc Ripping Started"
+              message: |
+                🎯 **{{ trigger.json.disc_label }}**
+                📂 Drive: {{ trigger.json.drive_id }}
+                💾 Output: {{ trigger.json.output_directory }}
+              data:
+                importance: normal
+                color: "#FF9800"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== DISC RIP COMPLETED (AUTO) =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'disc_rip_terminated' }}"
+        sequence:
+          - data:
+              title: >
+                {% if trigger.json.status == 'SUCCESS' %}
+                ✅ Disc Rip Completed Successfully
+                {% else %}
+                ❌ Disc Rip Failed
+                {% endif %}
+              message: |
+                🎯 **{{ trigger.json.disc_label }}**
+                📂 Drive: {{ trigger.json.drive_id }}
+                💾 Location: {{ trigger.json.output_directory }}
+                📊 Status: {{ trigger.json.status }}
+              data:
+                importance: high
+                color: >
+                  {% if trigger.json.status == 'SUCCESS' %}
+                  #4CAF50
+                  {% else %}
+                  #F44336
+                  {% endif %}
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== DISC SKIPPED (SMART FILTERING) =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'disc_rip_skipped' }}"
+          # Only notify for first-run skips or if it's been more than 1 hour since last skip
+          - condition: or
+            conditions:
+              - condition: template
+                value_template: "{{ trigger.json.reason == 'SERVICE_FIRST_RUN' }}"
+              - condition: template
+                value_template: >
+                  {% set last_skip = states('input_datetime.last_skip_notification') | as_datetime %}
+                  {% set now = now() %}
+                  {{ last_skip is none or (now - last_skip).total_seconds() > 3600 }}
+        sequence:
+          - service: input_datetime.set_datetime
+            target:
+              entity_id: input_datetime.last_skip_notification
+            data:
+              datetime: "{{ now() }}"
+          - data:
+              title: "⏭️ Disc Skipped"
+              message: |
+                🎯 **{{ trigger.json.disc_label }}**
+                📂 Drive: {{ trigger.json.drive_id }}
+                ❓ Reason: {{ trigger.json.reason | replace('_', ' ') | title }}
+              data:
+                importance: low
+                color: "#FFC107"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== EJECT FAILED =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'disc_eject_failed' }}"
+        sequence:
+          - data:
+              title: "⚠️ Disc Eject Failed"
+              message: |
+                📂 Drive: {{ trigger.json.drive_id }}
+                🚨 Error: {{ trigger.json.error_message }}
+
+                Manual intervention may be required.
+              data:
+                importance: high
+                color: "#FF5722"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== GUI RIP STARTED =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'gui_disc_rip_started' }}"
+        sequence:
+          - data:
+              title: "🖥️ Manual Rip Started"
+              message: |
+                🎯 **{{ trigger.json.disc_label }}**
+                💾 Output: {{ trigger.json.output_directory }}
+
+                Started via MakeMKV GUI
+              data:
+                importance: normal
+                color: "#9C27B0"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== GUI RIP COMPLETED =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'gui_disc_rip_terminated' }}"
+        sequence:
+          - data:
+              title: >
+                {% if trigger.json.status == 'SUCCESS' %}
+                ✅ Manual Rip Completed
+                {% else %}
+                ❌ Manual Rip Failed
+                {% endif %}
+              message: |
+                🎯 **{{ trigger.json.disc_label }}**
+                💾 Location: {{ trigger.json.output_directory }}
+                📊 Status: {{ trigger.json.status }}
+                💬 Message: {{ trigger.json.message }}
+              data:
+                importance: high
+                color: >
+                  {% if trigger.json.status == 'SUCCESS' %}
+                  #4CAF50
+                  {% else %}
+                  #F44336
+                  {% endif %}
+            action: notify.mobile_app_noah_kamaras_iphone
+
+      # ===== RAW STATUS (DEBUG) =====
+      - conditions:
+          - condition: template
+            value_template: "{{ trigger.json.event == 'gui_raw' }}"
+        sequence:
+          - data:
+              title: "🔧 MakeMKV Debug"
+              message: |
+                📊 Code: {{ trigger.json.status_code }}
+                💬 Message: {{ trigger.json.status_message }}
+              data:
+                importance: low
+                color: "#607D8B"
+            action: notify.mobile_app_noah_kamaras_iphone
+
+    # ===== FALLBACK FOR UNKNOWN EVENTS =====
+    default:
+      - data:
+          title: "❓ Unknown MakeMKV Event"
+          message: |
+            Event: {{ trigger.json.event }}
+            Raw data: {{ trigger.json }}
+          data:
+            importance: normal
+            color: "#9E9E9E"
+        action: notify.mobile_app_noah_kamaras_iphone
+
+mode: single

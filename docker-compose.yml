@@ -10,7 +10,7 @@ services:
     volumes:
       - ${CONFIG_DIRECTORY}/dashy/conf.yml:/app/user-data/conf.yml
     ports:
-      - 8080:8080
+      - 1234:8080
     # Set any environmental variables
     environment:
       - NODE_ENV=production
@@ -23,6 +23,25 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+  makemkv:
+    image: jlesage/makemkv
+    ports:
+      - 5800:5800
+    volumes:
+      - ${MEDIA_DIRECTORY}/makemkv:/output
+      - ${CONFIG_DIRECTORY}/makemkv/hooks:/config/hooks
+    environment:
+      - USER_ID=$PUID
+      - GROUP_ID=$PGID
+      - AUTO_DISC_RIPPER=1
+      - AUTO_DISC_RIPPER_EJECT=1
+    devices:
+      - /dev/sg5:/dev/sg5:ro
+    privileged: true
+    # - /home/user:/storage:ro
+    # - /home/user/MakeMKV/output:/output:rw
+    # --device /dev/sr0 \
+    # --device /dev/sg2 \
   # jellyfin is used to serve your media to the client devices
   jellyfin:
     image: lscr.io/linuxserver/jellyfin
