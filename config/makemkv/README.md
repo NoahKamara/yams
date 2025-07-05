@@ -12,6 +12,34 @@ This integration provides:
 - **Support for both automatic and manual ripping operations**
 - **Smart spam prevention** for repeated skipped disc notifications
 
+## 🎬 **YAMS-Compatible Media Stack**
+
+This MakeMKV integration is designed to work seamlessly with the [YAMS (Yet Another Media Server)](https://yams.media) ecosystem. Once you've ripped your discs with MakeMKV, they integrate perfectly with other services in the YAMS stack:
+
+### **📀 Content Acquisition**
+- **MakeMKV** - Rip Blu-ray/DVD discs (this integration)
+- **[qBittorrent](https://yams.media/config/#qbittorrent)** - BitTorrent client for downloading content
+- **[SABnzbd](https://yams.media/config/#sabnzbd)** - Usenet client for downloading content
+
+### **🎭 Content Management** 
+- **[Radarr](https://yams.media/config/#radarr)** - Movie collection manager and automation
+- **[Sonarr](https://yams.media/config/#sonarr)** - TV show collection manager and automation
+- **[Prowlarr](https://yams.media/config/#prowlarr)** - Indexer manager for torrent/usenet sources
+- **[Bazarr](https://yams.media/config/#bazarr)** - Subtitle management for movies and TV shows
+
+### **📺 Media Streaming**
+- **[Jellyfin](https://yams.media/config/#jellyfin)** - Open-source media server
+- **[Emby](https://yams.media/config/#emby)** - Personal media streaming platform  
+- **[Plex](https://yams.media/config/#plex)** - Popular media streaming service
+
+### **🔄 Typical Workflow**
+1. **MakeMKV** rips your physical discs → Raw video files
+2. **Radarr/Sonarr** monitors for new content and manages your library
+3. **Bazarr** downloads subtitles for your content
+4. **Jellyfin/Emby/Plex** serves your organized media to any device
+
+**📋 For complete configuration guides for these services**, visit: **[yams.media/config](https://yams.media/config/)**
+
 ## ✅ **Smart Spam Prevention**
 
 **Skipped disc notifications are enabled** but use intelligent filtering in Home Assistant to prevent spam:
